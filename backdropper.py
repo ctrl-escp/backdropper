@@ -60,7 +60,7 @@ class Backdropper:
 
 def get_access_token(token_filename: str) -> str:
 	with open(token_filename) as f:
-		at: str = f.read()
+		at: str = f.read().strip()
 	return at
 
 
