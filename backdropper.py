@@ -69,7 +69,7 @@ def create_parser() -> argparse.Namespace:
 	parser.add_argument("target", action="store", help="The file or directory to upload")
 	parser.add_argument("-n", "--name", action="store", help="Alternative path/name to save the target under")
 	parser.add_argument("--do-not-overwrite", action="store_false", help="Do not overwrite name if this flag is set")
-	parser.add_argument("-t", "--token-file", action="store", default=ACCESS_TOKEN_FILENAME, nargs=1,
+	parser.add_argument("-t", "--token-file", action="store", default=ACCESS_TOKEN_FILENAME,
 	                    help=f"Read token from file. By default look for {ACCESS_TOKEN_FILENAME} in current directory")
 	return parser.parse_args()
 
