@@ -45,7 +45,7 @@ cd into the directory and
       </ul>
     </details>
 
-* Save the secrets as a json file in the local directory named `.secrets` or pass the filename when running the script using the `-s` option.
+* Save the secrets as a json file in the local directory named `.secrets.json` or pass the filename when running the script using the `-s` option.
 
 ## Usage
 
