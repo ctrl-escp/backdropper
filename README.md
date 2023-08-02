@@ -34,22 +34,25 @@ cd into the directory and
             Go to the settings tab.
           </li>
           <li>
-            Click the <code>Generate</code> button under the <code>Generated access token</code> section.
-          </li>
-          <li>
-            Your API key will now appear.
+            Find the <code>App key</code> and <code>App secret</code> and copy their values into a JSON file:
+            ```json
+            {
+                "app_key": "...",
+                "app_secret": "..."
+            }
+            ```
           </li>
       </ul>
     </details>
 
-* Place the api key in a file named `.token` or pass the filename when running the script using the `-t` option.
+* Save the secrets as a json file in the local directory named `.secrets` or pass the filename when running the script using the `-s` option.
 
 ## Usage
 
 You can always do `python3 backdropper.py -h` to get the following usage text:
 
 ```
-usage: backdropper.py [-h] [-n NAME] [--do-not-overwrite] [-t TOKEN_FILE] target
+usage: backdropper.py [-h] [-n NAME] [--do-not-overwrite] [-s SECRETS_FILENAME] target
 
 Backdropper - Backup to Dropbox.
 
@@ -60,8 +63,8 @@ options:
   -h, --help            show this help message and exit
   -n NAME, --name NAME  Alternative path/name to save the target under
   --do-not-overwrite    Do not overwrite name if this flag is set
-  -t TOKEN_FILE, --token-file TOKEN_FILE
-                        Read token from file. By default look for .token in current directory
+  -s SECRETS_FILENAME, --secrets-filename SECRETS_FILENAME
+                        Read secrets from file. By default look for .secrets.json in current directory
 ```
 
 ### Examples
