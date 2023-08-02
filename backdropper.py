@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/local/env python3
 """
 Backdropper - Backup to Dropbox.
 """
@@ -14,7 +14,7 @@ SECRETS_FILENAME = ".secrets.json"
 
 class Backdropper:
 
-	def __init__(self, secrets_filename = SECRETS_FILENAME):
+	def __init__(self, secrets_filename=SECRETS_FILENAME):
 		self.secrets_filename = secrets_filename
 		self.secrets: dict = {}
 		self.dbx: dropbox.Dropbox | None = None
