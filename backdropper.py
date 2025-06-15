@@ -7,6 +7,7 @@ import json
 import dropbox
 import argparse
 from dropbox.files import WriteMode
+from dropbox.exceptions import AuthError
 from zipfile import ZipFile, ZIP_BZIP2
 
 SECRETS_FILENAME = ".secrets.json"
@@ -33,22 +34,41 @@ class Backdropper:
 			f.write(json.dumps(self.secrets, indent=2))
 
 	def _authorize(self):
-		if self.secrets.get("refresh_token"):
-			self.dbx = dropbox.Dropbox(app_key=self.secrets["app_key"], app_secret=self.secrets["app_secret"],
-									   oauth2_refresh_token=self.secrets["refresh_token"])
-		else:
+		try:
+			if self.secrets.get("refresh_token"):
+				try:
+					self.dbx = dropbox.Dropbox(app_key=self.secrets["app_key"], 
+											app_secret=self.secrets["app_secret"],
+											oauth2_refresh_token=self.secrets["refresh_token"])
+					# Test the connection
+					self.dbx.users_get_current_account()
+					return
+				except AuthError:
+					# Refresh token is invalid or expired, fall through to new authorization
+					pass
+
+			# If we get here, either there's no refresh token or it failed
 			oauth_flow = dropbox.oauth.DropboxOAuth2FlowNoRedirect(
-				self.secrets["app_key"], self.secrets["app_secret"], token_access_type="offline")
+				self.secrets["app_key"], 
+				self.secrets["app_secret"], 
+				token_access_type="offline")
 			authorize_url = oauth_flow.start()
 			print(f"1. Go to {authorize_url}")
-			print("2. Click 'Allow (you might have to log in first).")
+			print("2. Click 'Allow' (you might have to log in first).")
 			print("3. Copy the authorization code.")
-			auth_code = input("Enter the authorization code here: ")
-			oauth_result = oauth_flow.finish(auth_code)
-			access_token = oauth_result.access_token
-			self.dbx = dropbox.Dropbox(access_token)
-			self.secrets["refresh_token"] = oauth_result.refresh_token
-			self._save_secrets()
+			auth_code = input("Enter the authorization code here: ").strip()
+			
+			try:
+				oauth_result = oauth_flow.finish(auth_code)
+				self.dbx = dropbox.Dropbox(oauth_result.access_token)
+				self.secrets["refresh_token"] = oauth_result.refresh_token
+				self._save_secrets()
+			except AuthError as e:
+				print(f"Authorization failed: {e}")
+				raise
+		except Exception as e:
+			print(f"Error during authorization: {e}")
+			raise
 
 	def _upload_file(self, content: bytes):
 		mode = WriteMode("overwrite" if self.overwrite else "add")
